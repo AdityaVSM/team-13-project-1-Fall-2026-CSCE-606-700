@@ -55,8 +55,8 @@ kept as exported; story acceptance criteria below describe requested behavior.
 | [#10](https://github.com/tamu-edu-students/team-13-project-1-Fall-2026-CSCE-606-700/issues/10) | Test: adding a lost item records it correctly | jianqiuwang | Done | S | — |
 | [#6](https://github.com/tamu-edu-students/team-13-project-1-Fall-2026-CSCE-606-700/issues/6) | Implement input validation and error messages | jianqiuwang | Done | S | — |
 
-The backlog marks the matching algorithm and its test as Done, but the current
-`MatchingService#score` implementation is still a placeholder.
+The backlog marks the matching algorithm and its test as Done; `MatchingService#score`
+now implements a weighted name/category/location/description comparison.
 
 ---
 
@@ -163,9 +163,7 @@ record by hand.
 - If there are no candidates, the app tells me so.
 
 Related completed issues: matching algorithm (#19), displaying matches in the
-terminal (#20), and matching test (#21). The current matching service is still
-only a placeholder despite these issues being marked Done in the supplied
-backlog export.
+terminal (#20), and matching test (#21).
 
 ### US5 – Mark an Item as Returned (#22)
 

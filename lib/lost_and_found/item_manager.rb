@@ -2,10 +2,12 @@
 
 require_relative 'constants'
 require_relative 'repositories/item_repository'
+require_relative 'services/matching_service'
 
 class ItemManager
-  def initialize(repository = ItemRepository.new)
+  def initialize(repository = ItemRepository.new, matching_service: MatchingService.new)
     @repository = repository
+    @matching_service = matching_service
   end
 
   # Add lost or found records
@@ -49,10 +51,21 @@ class ItemManager
     @repository.search(filters)
   end
 
-  # Match entry point
-  # Actual matching logic will be implemented in the matching feature task
+  # Find possible matches for one lost item. Returns nil if the id does not
+  # exist or no longer refers to an open (still Lost) item.
   def match_item(id)
-    @repository.find(id)
+    lost_item = @repository.find(id)
+    return nil if lost_item.nil? || lost_item.status != Status::LOST
+
+    @matching_service.find_matches(lost_item, found_items)
+  end
+
+  # Find possible matches for every open lost item. Returns a Hash of
+  # { lost_item => matching found_items }.
+  def match_all_lost_items
+    lost_items.each_with_object({}) do |lost_item, matches|
+      matches[lost_item] = @matching_service.find_matches(lost_item, found_items)
+    end
   end
 
   # Update item status

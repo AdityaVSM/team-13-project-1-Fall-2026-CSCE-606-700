@@ -161,6 +161,45 @@ RSpec.describe ItemManager do
     end
   end
 
+  describe '#match_item' do
+    it 'returns possible matches for a lost item' do
+      manager = build_manager
+      lost = LostItem.new(name: 'Black Wallet', category: 'Wallet', location: 'Library')
+      manager.add_item(lost)
+      manager.add_item(FoundItem.new(name: 'Black Wallet', category: 'Wallet', location: 'Library'))
+
+      expect(manager.match_item(lost.id).map(&:name)).to eq(['Black Wallet'])
+    end
+
+    it 'returns an empty list when no found items match' do
+      manager = build_manager
+      lost = LostItem.new(name: 'Black Wallet', category: 'Wallet', location: 'Library')
+      manager.add_item(lost)
+      manager.add_item(FoundItem.new(name: 'Car Keys', category: 'Keys', location: 'Gym'))
+
+      expect(manager.match_item(lost.id)).to eq([])
+    end
+
+    it 'returns nil for an id that does not exist' do
+      manager = build_manager
+
+      expect(manager.match_item(999)).to be_nil
+    end
+  end
+
+  describe '#match_all_lost_items' do
+    it 'maps each lost item to its possible matches' do
+      manager = build_manager
+      manager.add_item(LostItem.new(name: 'Black Wallet', category: 'Wallet', location: 'Library'))
+      manager.add_item(FoundItem.new(name: 'Black Wallet', category: 'Wallet', location: 'Library'))
+
+      results = manager.match_all_lost_items
+      lost_item = results.keys.find { |item| item.name == 'Black Wallet' }
+
+      expect(results[lost_item].map(&:name)).to eq(['Black Wallet'])
+    end
+  end
+
   describe '#found_items' do
     it 'records a found item correctly' do
       manager = build_manager

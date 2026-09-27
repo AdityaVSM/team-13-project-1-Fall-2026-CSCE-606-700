@@ -12,18 +12,45 @@
 
 Lost & Found Tracker is a Ruby terminal application for recording and managing lost and found items. It stores records in a local SQLite database at `data/lost_and_found.sqlite3`.
 
-The interactive menu supports adding lost and found items, listing items by status, and marking a lost item as returned. Matching is incomplete: the menu reports that no items were found without prompting when there are no found records; otherwise, it requests name, category, and location filters but does not calculate lost-to-found similarity. Repository search is implemented but is not available from the menu.
+## Features
 
-## Requirements
+- Record a lost item or a found item with name, description, category, location, and date
+- List items by status (all, lost, found, or returned)
+- Find possible matches between a lost item and found items, using a weighted comparison of name, category, location, and description
+- Mark a lost item as returned once it has been recovered
+- Persistent local storage: records survive across application restarts
+- Input validation with clear error messages for required fields, invalid dates, and unknown IDs
+
+## Known Limitations
+
+- Repository search (`ItemManager#search_items`) is implemented and tested but is not exposed as its own menu option
+- User accounts, automatic match notifications, and item photos are stretch features and are not implemented — see [docs/user_stories.md](docs/user_stories.md) and [docs/backlog.md](docs/backlog.md)
+
+## Installation / Setup
+
+### Requirements
 
 - Ruby
 - Bundler
 
-Check the installed versions with `ruby --version` and `bundle --version`. Install dependencies with:
+Check the installed versions with:
 
 ```bash
+ruby --version
+bundle --version
+```
+
+### Install dependencies
+
+Clone the repository, then install the gems with Bundler:
+
+```bash
+git clone https://github.com/tamu-edu-students/team-13-project-1-Fall-2026-CSCE-606-700.git
+cd team-13-project-1-Fall-2026-CSCE-606-700
 bundle install
 ```
+
+This installs `rspec`, `rubocop`, `simplecov`, and `sqlite3` as declared in the [Gemfile](Gemfile).
 
 ## Run the Application
 
@@ -61,6 +88,24 @@ bundle exec rubocop
 
 GitHub Actions runs both commands for pull requests targeting `main`.
 
+### Generating a Coverage Report
+
+Test runs are instrumented with [SimpleCov](https://github.com/simplecov-ruby/simplecov) (configured in `spec/spec_helper.rb`, loaded automatically via `.rspec`). Running the test suite generates the report:
+
+```bash
+bundle exec rspec
+```
+
+Open the generated report in a browser to view line-by-line coverage:
+
+```bash
+open coverage/index.html      # macOS
+xdg-open coverage/index.html  # Linux
+start coverage/index.html     # Windows
+```
+
+The `coverage/` directory is regenerated on every run and is ignored by Git.
+
 ## Project Structure
 
 ```text
@@ -82,6 +127,6 @@ bin/lost_and_found
  README.md
 ```
 
-## Current Scope
+## Further Reading
 
-User accounts, automatic match notifications, and item photos are not implemented. See [the user stories](docs/user_stories.md) for story status and [the design document](docs/design.md) for the current architecture and behavior.
+See [the user stories](docs/user_stories.md) for story status and [the design document](docs/design.md) for the current architecture and behavior.
