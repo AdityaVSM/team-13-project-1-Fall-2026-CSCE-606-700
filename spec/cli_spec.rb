@@ -169,6 +169,33 @@ RSpec.describe LostAndFound::CLI do
     end
   end
 
+  describe 'finding matches for a lost item' do
+    it 'shows possible matches for a specific lost item id' do
+      run_cli("1\nBlack Wallet\nLibrary\n\n\n\n2\nBlack Wallet\nLibrary\n\n\n\n3\n1\n8\n")
+
+      expect(output.string).to include('Matches for #1 | Black Wallet')
+      expect(output.string).to include('ID: 2 | Black Wallet')
+    end
+
+    it 'shows matches for every lost item when the id is left blank' do
+      run_cli("1\nBlack Wallet\nLibrary\n\n\n\n2\nBlack Wallet\nLibrary\n\n\n\n3\n\n8\n")
+
+      expect(output.string).to include('Matches for #1 | Black Wallet')
+    end
+
+    it 'reports no matches for clearly unrelated items' do
+      run_cli("1\nBlack Wallet\nLibrary\n\n\n\n2\nCar Keys\nGym\n\n\n\n3\n1\n8\n")
+
+      expect(output.string).to include('No possible matches found.')
+    end
+
+    it 'shows an error for a lost item id that does not exist' do
+      run_cli("2\nCar Keys\nGym\n\n\n\n3\n999\n8\n")
+
+      expect(output.string).to include('No lost item found with ID 999.')
+    end
+  end
+
   describe 'marking an item as returned' do
     it 'updates the status of an existing item' do
       run_cli("1\nBlack Wallet\nLibrary\n\n\n\n8\n")

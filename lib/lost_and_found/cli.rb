@@ -102,20 +102,6 @@ module LostAndFound
       @formatter.message("Added found item: #{item.name}")
     end
 
-    def list_or_search_items
-      @formatter.message('Leave a field blank to skip it, or leave all blank to list everything.')
-      name = @prompts.ask('Name contains')
-      category = @prompts.ask('Category contains')
-      location = @prompts.ask('Location contains')
-
-      filters = { name: name, category: category, location: location }.reject do |_field, value|
-        value.nil? || value.empty?
-      end
-
-      items = filters.empty? ? @item_manager.all_items : @item_manager.search_items(filters)
-      @formatter.list(items, empty_message: 'No items found.')
-    end
-
     def list_lost_items
       @formatter.list(@item_manager.lost_items, empty_message: 'No lost items found.')
     end
@@ -134,17 +120,37 @@ module LostAndFound
         return
       end
 
-      @formatter.message('Leave a field blank to skip it, or leave all blank to list everything.')
-      name = @prompts.ask('Name contains')
-      category = @prompts.ask('Category contains')
-      location = @prompts.ask('Location contains')
+      id = @prompts.ask_optional_id('Lost item ID (blank for all lost items)')
+      return if id == :none
 
-      filters = { name: name, category: category, location: location }.reject do |_field, value|
-        value.nil? || value.empty?
+      id.nil? ? show_matches_for_all_lost_items : show_matches_for_lost_item(id)
+    end
+
+    def show_matches_for_lost_item(id)
+      matches = @item_manager.match_item(id)
+
+      if matches.nil?
+        @formatter.error("No lost item found with ID #{id}.")
+        return
       end
 
-      items = filters.empty? ? @item_manager.all_items : @item_manager.search_items(filters)
-      @formatter.list(items, empty_message: 'No items found.')
+      lost_item = @item_manager.find_item(id)
+      @formatter.message("Matches for ##{lost_item.id} | #{lost_item.name}:")
+      @formatter.list(matches, empty_message: 'No possible matches found.')
+    end
+
+    def show_matches_for_all_lost_items
+      results = @item_manager.match_all_lost_items.reject { |_lost_item, matches| matches.empty? }
+
+      if results.empty?
+        @formatter.message('No possible matches found.')
+        return
+      end
+
+      results.each do |lost_item, matches|
+        @formatter.message("Matches for ##{lost_item.id} | #{lost_item.name}:")
+        @formatter.list(matches)
+      end
     end
 
     def mark_returned

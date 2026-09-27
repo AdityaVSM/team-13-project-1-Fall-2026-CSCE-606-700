@@ -3,3 +3,6 @@ Gemfile.lock
 
 # Local persisted data
 /data/
+
+# Test coverage report
+/coverage/

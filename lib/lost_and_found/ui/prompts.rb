@@ -74,4 +74,18 @@ class Prompts
       @output.puts 'Invalid ID. Please enter a number.'
     end
   end
+
+  # A blank answer is a valid choice here (meaning "skip filtering by ID"),
+  # so it is distinguished from EOF: EOF returns :none, blank returns nil.
+  def ask_optional_id(label)
+    loop do
+      value = ask(label)
+
+      return :none if value.nil?
+      return nil if value.empty?
+      return value.to_i if value.match?(/\A\d+\z/)
+
+      @output.puts 'Invalid ID. Please enter a number, or leave blank.'
+    end
+  end
 end
