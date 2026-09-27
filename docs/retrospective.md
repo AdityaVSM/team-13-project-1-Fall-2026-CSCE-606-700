@@ -3,9 +3,10 @@ Retrospective for Team 13 Project 1.
 
 What went well?
 
+What was difficult?
 
-What didn't go well?
+What would the trio improve next time?
 
+Did the final app meet the original goal?
 
-What should we start doing?
 
