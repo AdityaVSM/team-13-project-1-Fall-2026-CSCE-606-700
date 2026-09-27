@@ -20,7 +20,7 @@ bundle --version
 bundle install
 ```
 
-This installs the gems declared in the [Gemfile](../Gemfile): `rspec`, `rubocop`, and `sqlite3`.
+This installs the gems declared in the [Gemfile](../Gemfile): `rspec`, `rubocop`, `simplecov`, and `sqlite3`.
 
 ## Running the Application
 
@@ -55,7 +55,15 @@ Run the test suite with:
 bundle exec rspec
 ```
 
-RSpec prints a summary of examples run, failures, and pass/fail status at the end of the run — this is the coverage report currently available in this repo (there is no dedicated coverage-percentage tool such as SimpleCov configured yet).
+Test runs are instrumented with [SimpleCov](https://github.com/simplecov-ruby/simplecov) (configured in `spec/spec_helper.rb`, loaded automatically via `.rspec`), so this also generates a coverage report at `coverage/index.html`:
+
+```bash
+open coverage/index.html      # macOS
+xdg-open coverage/index.html  # Linux
+start coverage/index.html     # Windows
+```
+
+The `coverage/` directory is regenerated on every run and is ignored by Git.
 
 Run the linter with:
 
