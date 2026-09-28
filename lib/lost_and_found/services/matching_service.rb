@@ -19,7 +19,7 @@ class MatchingService
   private
 
   def score(lost_item, found_item)
-    fields = WEIGHTS.select { |field, _weight| !normalize(lost_item.public_send(field)).empty? }
+    fields = WEIGHTS.reject { |field, _weight| normalize(lost_item.public_send(field)).empty? }
     return 0.0 if fields.empty?
 
     total_weight = fields.values.sum

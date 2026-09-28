@@ -120,6 +120,17 @@ module LostAndFound
         return
       end
 
+      lost_item = prompt_for_match_item
+      return if lost_item.nil?
+
+      criteria = [lost_item.name, lost_item.category, lost_item.location, lost_item.description].reject(&:empty?)
+      matches = @item_manager.match_lost_item(lost_item)
+
+      @formatter.message("Matches for: #{criteria.join(' | ')}")
+      @formatter.list(matches, empty_message: 'No possible matches found.')
+    end
+
+    def prompt_for_match_item
       name = @prompts.ask('Lost item name (optional)')
       return if name.nil?
 
@@ -138,11 +149,7 @@ module LostAndFound
         return
       end
 
-      lost_item = LostItem.new(name: name, category: category, location: location, description: description)
-      matches = @item_manager.match_lost_item(lost_item)
-
-      @formatter.message("Matches for: #{criteria.join(' | ')}")
-      @formatter.list(matches, empty_message: 'No possible matches found.')
+      LostItem.new(name: name, category: category, location: location, description: description)
     end
 
     def mark_returned
